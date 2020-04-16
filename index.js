@@ -15,7 +15,7 @@ module.exports = app => {
     const { head_branch: headBranch, head_sha: headSha } = context.payload.check_suite
     // Probot API note: context.repo() => {username: 'hiimbex', repo: 'testing-things'}
     return context.github.checks.create(context.repo({
-      name: 'My app!',
+      name: 'Nat Validator',
       head_branch: headBranch,
       head_sha: headSha,
       status: 'completed',
@@ -23,7 +23,7 @@ module.exports = app => {
       conclusion: 'success',
       completed_at: new Date(),
       output: {
-        title: 'Probot check!',
+        title: 'Validate PR'
         summary: 'The check has passed!'
       }
     }))
