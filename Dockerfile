@@ -11,9 +11,10 @@ WORKDIR /app/probot/
 COPY --from=builder /app/probot/node_modules/ ./node_modules/
 COPY . ./
 
-ENV LOG_LEVEL debug
-ENV PORT 8080
 ENV LOG_FORMAT json
+ENV LOG_LEVEL debug
+ENV LOG_LEVEL_IN_STRING true
+ENV PORT 8080
 
 EXPOSE 8080
 ENTRYPOINT [ "npm", "start" ]
