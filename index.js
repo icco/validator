@@ -5,8 +5,8 @@ const lb = require('@google-cloud/logging-bunyan')
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = app => {
-  const { mw } = lb.express.middleware()
+module.exports = async (app) => {
+  const { mw } = await lb.express.middleware()
   const router = app.route('/')
   router.get('/healthz', (req, res) => {
     res.send('hi.')
