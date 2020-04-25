@@ -11,7 +11,7 @@ WORKDIR /app/probot/
 COPY --from=builder /app/probot/node_modules/ ./node_modules/
 COPY . ./
 
-ENV LOG_FORMAT json
+ENV LOG_FORMAT bunyan
 ENV LOG_LEVEL info
 ENV PORT 8080
 
