@@ -59,7 +59,7 @@ module.exports = async (app) => {
 
 async function loadLicense (context) {
   try {
-    const resp = await context.github.licenses.getForRepo(context.repo({}))
+    const resp = await context.github.licenses.getForRepo(context.repo())
     return resp.data.content
   } catch (e) {
     if (e.status === 404) {
