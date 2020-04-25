@@ -23,8 +23,8 @@ module.exports = app => {
       conclusion: 'success',
       completed_at: new Date(),
       output: {
-        title: 'Validate PR'
-        summary: 'The check has passed!'
+        title: 'Validate PR',
+        summary: 'The check has passed!',
       }
     }))
   }
