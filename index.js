@@ -1,10 +1,13 @@
+const Bunyan = require('bunyan');
 const createScheduler = require('probot-scheduler')
+const {createStream} = require('bunyan-gke-stackdriver');
 
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
 module.exports = async (app) => {
+  app.log = Bunyan.createLogger({ streams: [createStream()], });
   const router = app.route('/')
   router.get('/healthz', (req, res) => {
     res.send('hi.')

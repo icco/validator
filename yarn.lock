@@ -998,6 +998,11 @@ bunyan-format@^0.2.1:
     ansistyles "~0.1.1"
     xtend "~2.1.1"
 
+bunyan-gke-stackdriver@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/bunyan-gke-stackdriver/-/bunyan-gke-stackdriver-0.1.2.tgz#a47e3724bbb324b1ec0b7dc4350c4d7073aae66d"
+  integrity sha512-eY5OLgAXvOvOq2YpxI0HlV5HjAcLm36Ln3PxxsztO+2GrFSgU3oXoic2LCif/heBKoyOZdMyXKWF5dvswSOS6w==
+
 bunyan-sentry-stream@^1.1.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/bunyan-sentry-stream/-/bunyan-sentry-stream-1.2.1.tgz#fdd9f42fa75879f2a210579bdc2712f8285cd12b"
