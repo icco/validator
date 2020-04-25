@@ -27,7 +27,7 @@ module.exports = async (app) => {
     const issue = findIssue(context, title)
 
     if (issue != null) {
-      context.log({ issue, repo: context.repo() }, 'app has open issue')
+      context.log.debug({ issue, repo: context.repo() }, 'app has open issue')
       return
     }
 
