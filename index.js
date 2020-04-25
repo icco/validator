@@ -1,13 +1,13 @@
-const Bunyan = require('bunyan');
+const Bunyan = require('bunyan')
 const createScheduler = require('probot-scheduler')
-const {createStream} = require('bunyan-gke-stackdriver');
+const { createStream } = require('bunyan-gke-stackdriver')
 
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
 module.exports = async (app) => {
-  app.log = Bunyan.createLogger({ streams: [createStream()], });
+  app.log = Bunyan.createLogger({ streams: [createStream()] })
   const router = app.route('/')
   router.get('/healthz', (req, res) => {
     res.send('hi.')
@@ -18,7 +18,7 @@ module.exports = async (app) => {
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
     if (license != null) {
-      context.log({license, repo: context.repo()}, "app has license")
+      context.log({ license, repo: context.repo() }, 'app has license')
       return
     }
 
@@ -27,7 +27,7 @@ module.exports = async (app) => {
     const issue = findIssue(context, title)
 
     if (issue != null) {
-      context.log(context.repo(), "app has open issue")
+      context.log(context.repo(), 'app has open issue')
       return
     }
 
