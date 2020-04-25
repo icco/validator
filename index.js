@@ -54,7 +54,7 @@ async function loadLicense (context) {
       return null
     }
 
-    throw e
+    context.log.error(e, 'getting license')
   }
 }
 

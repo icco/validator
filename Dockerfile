@@ -13,5 +13,7 @@ COPY . ./
 
 ENV LOG_LEVEL debug
 ENV PORT 8080
+ENV LOG_FORMAT json
+
 EXPOSE 8080
 ENTRYPOINT [ "npm", "start" ]
