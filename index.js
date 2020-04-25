@@ -50,7 +50,7 @@ async function loadLicense (context) {
     const resp = await context.github.licenses.getForRepo(context.repo({}))
     return resp.data.content
   } catch (e) {
-    if (e.code === 404) {
+    if (e.status === 404) {
       return null
     }
 
