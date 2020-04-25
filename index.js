@@ -7,10 +7,7 @@ const { createStream } = require('bunyan-gke-stackdriver')
  * @param {import('probot').Application} app
  */
 module.exports = async (app) => {
-  app.log.target = Bunyan.createLogger({
-    name: 'logs',
-    streams: [createStream()]
-  })
+  app.log.target.addStream(createStream())
 
   const router = app.route('/')
   router.get('/healthz', (req, res) => {
