@@ -8,20 +8,20 @@ module.exports = app => {
   createScheduler(app)
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
-    let license = loadLicense(context)
+    const license = loadLicense(context)
     if (license != null) {
       return
     }
 
-    let title = "Repo needs a LICENSE"
-    let description = "This repo is missing a license file according to the Github API. Please add one."
-    let issue = findIssue(context, title)
+    const title = 'Repo needs a LICENSE'
+    const description = 'This repo is missing a license file according to the Github API. Please add one.'
+    const issue = findIssue(context, title)
 
     if (issue == null) {
-      octokit.issues.create(contex.repo({
+      context.github.issues.create(context.repo({
         title,
-        description,
-      }));
+        description
+      }))
     }
   })
 
@@ -39,33 +39,33 @@ module.exports = app => {
       completed_at: new Date(),
       output: {
         title: 'Validate PR',
-        summary: 'The check has passed!',
+        summary: 'The check has passed!'
       }
     }))
   }
 }
 
-async function loadLicense(context) {
+async function loadLicense (context) {
   try {
-    const resp = await context.github.licenses.getForRepo(context.repo({}));
-    return response.data.content;
+    const resp = await context.github.licenses.getForRepo(context.repo({}))
+    return resp.data.content
   } catch (e) {
     if (e.code === 404) {
-      return null;
+      return null
     }
 
-    throw e;
+    throw e
   }
 }
 
-async function findIssue(context, title) {
+async function findIssue (context, title) {
   const issues = await context.github.issues.listForRepo(context.repo({
-    state: "open",
-    per_page: 100,
-  }));
+    state: 'open',
+    per_page: 100
+  }))
 
   issues.forEach((issue) => {
-    if (issue.title == title) {
+    if (issue.title === title) {
       return issue.id
     }
   })
