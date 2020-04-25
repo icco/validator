@@ -9,8 +9,8 @@ const { createStream } = require('bunyan-gke-stackdriver')
 module.exports = async (app) => {
   app.log.target = Bunyan.createLogger({
     name: 'logs',
-    streams: [createStream()],
-  });
+    streams: [createStream()]
+  })
 
   const router = app.route('/')
   router.get('/healthz', (req, res) => {
