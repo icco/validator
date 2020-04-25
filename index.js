@@ -59,16 +59,20 @@ async function loadLicense (context) {
 }
 
 async function findIssue (context, title) {
-  const issues = await context.github.issues.listForRepo(context.repo({
+  let id = null
+  const options = context.github.issues.getAll.endpoint.merge(context.repo({
     state: 'open',
     per_page: 100
   }))
-
-  issues.forEach((issue) => {
-    if (issue.title === title) {
-      return issue.id
+  context.github.paginate(options, (res, done) => {
+    for (const issue of res.data) {
+      if (issue.title === title) {
+        id = issue.id
+        done()
+        break
+      }
     }
   })
 
-  return null
+  return id
 }
