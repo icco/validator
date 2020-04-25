@@ -12,7 +12,7 @@ COPY --from=builder /app/probot/node_modules/ ./node_modules/
 COPY . ./
 
 ENV LOG_FORMAT json
-ENV LOG_LEVEL debug
+ENV LOG_LEVEL info
 ENV LOG_LEVEL_IN_STRING true
 ENV PORT 8080
 
