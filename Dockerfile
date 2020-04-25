@@ -12,7 +12,7 @@ COPY --from=builder /app/probot/node_modules/ ./node_modules/
 COPY . ./
 
 ENV LOG_FORMAT bunyan
-ENV LOG_LEVEL info
+ENV LOG_LEVEL debug
 ENV PORT 8080
 
 EXPOSE 8080
