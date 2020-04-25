@@ -18,6 +18,7 @@ module.exports = async (app) => {
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
     if (license != null) {
+      context.log("app has license")
       return
     }
 
@@ -25,12 +26,15 @@ module.exports = async (app) => {
     const description = 'This repo is missing a license file according to the Github API. Please add one.'
     const issue = findIssue(context, title)
 
-    if (issue == null) {
-      context.github.issues.create(context.repo({
-        title,
-        description
-      }))
+    if (issue != null) {
+      context.log("app has open issue")
+      return
     }
+
+    context.github.issues.create(context.repo({
+      title,
+      description
+    }))
   })
 
   async function check (context) {
