@@ -1,4 +1,3 @@
-const Bunyan = require('bunyan')
 const createScheduler = require('probot-scheduler')
 const { createStream } = require('bunyan-gke-stackdriver')
 
@@ -61,7 +60,7 @@ module.exports = async (app) => {
 async function loadLicense (context) {
   try {
     const resp = await context.github.licenses.getForRepo(context.repo())
-    context.log(resp, "got response from license lookup")
+    context.log(resp, 'got response from license lookup')
     return resp.data.content
   } catch (e) {
     if (e.status === 404) {
