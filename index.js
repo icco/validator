@@ -17,8 +17,8 @@ module.exports = async (app) => {
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
-    if (license != null) {
-      context.log({ license, repo: context.repo() }, 'app has license')
+    if (license != null && license !== 'Other') {
+      context.log.debug({ license, repo: context.repo() }, 'app has license')
       return
     }
 
@@ -27,7 +27,7 @@ module.exports = async (app) => {
     const issue = findIssue(context, title)
 
     if (issue != null) {
-      context.log(context.repo(), 'app has open issue')
+      context.log({ issue, repo: context.repo() }, 'app has open issue')
       return
     }
 
@@ -61,7 +61,11 @@ async function loadLicense (context) {
   try {
     const resp = await context.github.licenses.getForRepo(context.repo())
     context.log(resp, 'got response from license lookup')
-    return resp.data.content
+    if (resp.status === 200) {
+      return resp.data.license.name
+    }
+
+    return null
   } catch (e) {
     if (e.status === 404) {
       return null
