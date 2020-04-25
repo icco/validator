@@ -1,10 +1,18 @@
 const createScheduler = require('probot-scheduler')
+const lb = require('@google-cloud/logging-bunyan');
 
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
 module.exports = app => {
+  const {mw} = await lb.express.middleware();
+  const router = app.route('/')
+  router.get('/healthz', (req, res) => {
+    res.send('hi.')
+  })
+  router.use(mw)
+
   createScheduler(app)
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
