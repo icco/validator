@@ -17,4 +17,4 @@ ENV LOG_LEVEL_IN_STRING true
 ENV PORT 8080
 
 EXPOSE 8080
-ENTRYPOINT [ "npm", "start" ]
+CMD ["yarn", "run", "start"]
