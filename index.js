@@ -60,7 +60,7 @@ module.exports = async (app) => {
 async function loadLicense (context) {
   try {
     const resp = await context.github.licenses.getForRepo(context.repo())
-    context.log(resp, 'got response from license lookup')
+    context.log.debug({resp, repo: context.repo()}, 'got response from license lookup')
     if (resp.status === 200) {
       return resp.data.license.name
     }
