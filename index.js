@@ -18,7 +18,7 @@ module.exports = async (app) => {
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
     if (license != null && license !== 'Other') {
-      context.log.debug({ license, repo: context.repo() }, 'app has license')
+      context.log.debug({ license: JSON.stringify(license), repo: context.repo() }, 'app has license')
       return
     }
 
