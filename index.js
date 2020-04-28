@@ -17,8 +17,9 @@ module.exports = async (app) => {
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
-    if (license != null && !Object.keys(license).length && license !== 'Other') {
-      context.log.debug({ license: JSON.stringify(license), repo: context.repo() }, 'app has license')
+    const hasLicense = (license !== '' && !Object.keys(license).length && license !== 'Other')
+    context.log.debug({ license: JSON.stringify(license), hasLicense, repo: context.repo() }, 'app got license')
+    if (hasLicense) {
       return
     }
 
@@ -65,13 +66,12 @@ async function loadLicense (context) {
       return resp.data.license.name
     }
 
-    return null
+    return ''
   } catch (e) {
-    if (e.status === 404) {
-      return null
-    }
-
     context.log.error(e, 'getting license')
+    if (e.status === 404) {
+      return ''
+    }
   }
 }
 
