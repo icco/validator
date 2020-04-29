@@ -77,13 +77,9 @@ async function loadLicense (context) {
 
 async function findIssue (context, title) {
   let id = 0
-  for await (const res of context.github.paginate.iterator(context.github.issues.listForRepo, context.repo({ state: 'open', per_page: 100 }))) {
-    for (const issue of res.data) {
-      if (issue.title === title) {
-        id = issue.id
-        break
-      }
-    }
+  const opts = context.repo({ state: 'open', per_page: 100 })
+  for await (const res of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
+    context.log({ res, repo: opts }, "debug issues")
   }
 
   return id
