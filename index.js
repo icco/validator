@@ -81,10 +81,10 @@ async function loadLicense (context) {
 
 // TODO: Add error catching
 async function findIssue (context, title) {
-  const id = 0
+  const id = 1 // TODO: set to 0
   const opts = context.repo({ state: 'open', per_page: 100 })
-  for await (const res of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
-    context.log({ res, repo: opts }, 'debug issues')
+  for await (const response of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
+    context.log({ response, repo: opts }, 'debug issues')
   }
 
   return id
