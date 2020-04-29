@@ -27,7 +27,7 @@ module.exports = async (app) => {
     const description = 'This repo is missing a license file according to the Github API. Please add one.'
     const issue = findIssue(context, title)
 
-    if (issue != null) {
+    if (issue > 0) {
       context.log.debug({ issue, repo: context.repo() }, 'app has open issue')
       return
     }
@@ -76,20 +76,15 @@ async function loadLicense (context) {
 }
 
 async function findIssue (context, title) {
-  let id = null
-  const options = context.github.issues.getAll.endpoint.merge(context.repo({
-    state: 'open',
-    per_page: 100
-  }))
-  context.github.paginate(options, (res, done) => {
+  let id = 0
+  for await (const res of context.github.paginate.iterator(context.github.issues.listForRepo, context.repo({ state: 'open', per_page: 100 }))) {
     for (const issue of res.data) {
       if (issue.title === title) {
         id = issue.id
-        done()
         break
       }
     }
-  })
+  }
 
   return id
 }
