@@ -17,9 +17,9 @@ module.exports = async (app) => {
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
     const license = loadLicense(context)
-    const hasLicense = (license !== '' && !Object.keys(license).length && license !== 'Other')
+    const noLicense = (license !== '' || !Object.keys(license).length || license !== 'Other')
     context.log.debug({ license: JSON.stringify(license), hasLicense, repo: context.repo() }, 'app got license')
-    if (hasLicense) {
+    if (!noLicense) {
       return
     }
 
