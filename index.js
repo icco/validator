@@ -28,7 +28,7 @@ module.exports = async (app) => {
     }
 
     const title = 'Repo needs a LICENSE'
-    const description = 'This repo is missing a license file according to the Github API. Please add one.'
+    const description = 'This repo is missing a license file according to the Github API. Please add one. Please add one @icco.'
     const issue = findIssue(context, title)
 
     if (issue > 0) {
@@ -38,7 +38,8 @@ module.exports = async (app) => {
 
     context.github.issues.create(context.repo({
       title,
-      description
+      description,
+      assignees: ['icco']
     }))
   })
 
