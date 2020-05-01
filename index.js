@@ -16,7 +16,8 @@ module.exports = async (app) => {
   createScheduler(app)
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
   app.on('schedule.repository', context => {
-    if (closedRepo(context)) {
+    const { owner, repo } = context.repo()
+    if (closedRepo(context, owner, repo)) {
       return
     }
 
@@ -94,12 +95,11 @@ async function findIssue (context, title) {
   }
 }
 
-async function closedRepo (context) {
+async function closedRepo (context, owner, repo) {
   try {
-    const repo = context.repo()
-    const resp = context.github.repos.get(repo)
+    const resp = context.github.repos.get({ owner, repo })
     const closed = !!(!resp.fork && !resp.archived && resp.has_issues)
-    context.log.debug({ repo }, `resp: ${JSON.stringify(resp)}, closed: ${JSON.stringify(closed)}: grabbed repo`)
+    context.log.debug({ repo: { owner, repo } }, `resp: ${JSON.stringify(resp)}, closed: ${JSON.stringify(closed)}: grabbed repo`)
     return closed
   } catch (e) {
     context.log.error(e, 'error getting repo')
