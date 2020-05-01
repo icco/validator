@@ -73,27 +73,35 @@ async function loadLicense (context) {
 
     return ''
   } catch (e) {
-    context.log.error(e, 'getting license')
-    if (e.status === 404) {
-      return ''
-    }
+    context.log.error(e, 'error getting license')
+    return ''
   }
 }
 
 // TODO: Add error catching
 async function findIssue (context, title) {
-  const id = 1 // TODO: set to 0
-  const opts = context.repo({ state: 'open', per_page: 100 })
-  for await (const response of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
-    context.log({ response, repo: opts }, 'debug issues')
-  }
+  try {
+    const id = 1 // TODO: set to 0
+    const opts = context.repo({ state: 'open', per_page: 100 })
+    for await (const response of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
+      context.log({ response, repo: opts }, 'debug issues')
+    }
 
-  return id
+    return id
+  } catch (e) {
+    context.log.error(e, 'error getting issue')
+    return 1
+  }
 }
 
 async function closedRepo (context) {
-  const resp = context.github.repos.get(context.repo({}))
-  const closed = !resp.fork && !resp.archived && resp.has_issues
-  context.log.debug(`repo: ${JSON.stringify(resp)}, closed: ${JSON.stringify(closed)}: grabbed repo`)
-  return closed
+  try {
+    const resp = context.github.repos.get(context.repo({}))
+    const closed = !resp.fork && !resp.archived && resp.has_issues
+    context.log.debug(`repo: ${JSON.stringify(resp)}, closed: ${JSON.stringify(closed)}: grabbed repo`)
+    return closed
+  } catch (e) {
+    context.log.error(e, 'error getting repo')
+    return true
+  }
 }
