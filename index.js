@@ -18,10 +18,13 @@ module.exports = async (app) => {
   app.on('schedule.repository', async (context) => {
     const { owner, repo } = context.repo()
     const closed = await closedRepo(context, owner, repo)
+    if (closed) {
+      return
+    }
+
     const license = await loadLicense(context)
     const noLicense = (license !== '' || !Object.keys(license).length || license !== 'Other')
-
-    context.log.debug({ closed, license: JSON.stringify(license), noLicense, repo: context.repo() }, 'app got license')
+    context.log.debug({ closed, license, noLicense, repo: context.repo() }, 'app got license')
     if (!noLicense) {
       return
     }
@@ -79,16 +82,16 @@ async function loadLicense (context) {
 
 // TODO: Add error catching
 async function findIssue (context, title) {
+  const opts = context.repo({ state: 'open', per_page: 100 })
   try {
     const id = 1 // TODO: set to 0
-    const opts = context.repo({ state: 'open', per_page: 100 })
     for await (const response of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
       context.log.debug({ response, repo: opts }, 'debug issues')
     }
 
     return id
   } catch (e) {
-    context.log.error(e, 'error getting issue')
+    context.log.error({ err: e, repo: opts }, 'error getting issue')
     return 1
   }
 }
