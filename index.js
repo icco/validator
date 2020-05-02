@@ -23,7 +23,7 @@ module.exports = async (app) => {
     }
 
     const license = await loadLicense(context, owner, repo)
-    const hasLicense = (license !== '' && license !== 'Other')
+    const hasLicense = (license !== '')
     context.log.debug({ closed, license, hasLicense, repo: { owner, repo } }, 'app got license')
     if (hasLicense) {
       return
@@ -68,14 +68,14 @@ module.exports = async (app) => {
 async function loadLicense (context, owner, repo) {
   try {
     const resp = await context.github.licenses.getForRepo({ owner, repo })
-    context.log.debug({ resp, repo: { owner, repo } }, 'got response from license lookup')
+    context.log.debug({ resp: resp.data, repo: { owner, repo } }, 'got response from license lookup')
     if (resp.status === 200) {
       return resp.data.license.name
     }
 
     return ''
   } catch (e) {
-    context.log.error(e, 'error getting license')
+    context.log.error({ err: e, repo: opts }, 'error getting license')
     return ''
   }
 }
