@@ -86,7 +86,10 @@ async function findIssue (context, title) {
   try {
     const id = 1 // TODO: set to 0
     for await (const response of context.github.paginate.iterator(context.github.issues.listForRepo, opts)) {
-      context.log.debug({ response, repo: opts }, 'debug issues')
+      context.log.debug({ response: response.data.issues, repo: opts }, 'debug issues')
+      response.data.issues.forEach(issue => {
+        console.log.debug({ issue }, "got issue")
+      })
     }
 
     return id
