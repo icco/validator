@@ -101,8 +101,16 @@ async function findIssue (context, title) {
 async function closedRepo (context, owner, repo) {
   try {
     const resp = await context.github.repos.get({ owner, repo })
-    const closed = resp.fork || resp.archived
-    context.log.debug({ repo: { owner, repo }, closed: JSON.stringify(closed) }, 'grabbed repo')
+    const closed = resp.fork || resp.archived || resp.disabled
+    context.log.debug({
+      repo: { owner, repo, disabled: resp.disabled, fork: resp.fork, archived: resp.archived, issues: resp.has_issues },
+      closed: JSON.stringify(closed)
+    }, 'grabbed repo')
+
+    if (!closed) {
+      return resp.has_issues
+    }
+
     return closed
   } catch (e) {
     context.log.error(e, 'error getting repo')
