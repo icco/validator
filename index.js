@@ -87,7 +87,7 @@ async function findIssue (context, title) {
     const id = 1 // TODO: set to 0
     context.github.paginate(context.github.issues.listForRepo, opts).then((issues) => {
       issues.forEach(issue => {
-        context.log.debug({ issue }, 'got issue')
+        context.log.debug({ repo: opts, issue: JSON.stringify(issue), title: issue.title }, 'got issue')
       })
     })
 
