@@ -75,7 +75,7 @@ async function loadLicense (context, owner, repo) {
 
     return ''
   } catch (e) {
-    context.log.error({ err: e, repo: opts }, 'error getting license')
+    context.log.error({ err: e, repo: { owner, repo } }, 'error getting license')
     return ''
   }
 }
