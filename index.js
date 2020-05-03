@@ -24,7 +24,7 @@ module.exports = async (app) => {
 
     const license = await loadLicense(context, owner, repo)
     const hasLicense = (license !== '')
-    context.log.debug({ closed, license, hasLicense, repo: { owner, repo } }, 'app got license')
+    context.log.debug({ closed, license, hasLicense, repo: { owner, repo } }, 'got license')
     if (hasLicense) {
       return
     }
