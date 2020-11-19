@@ -1,21 +1,40 @@
-const createScheduler = require('probot-scheduler')
-const { createStream } = require('bunyan-gke-stackdriver')
-
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = async (app) => {
-  app.log.target.addStream(createStream())
+module.exports = ({ app, getRouter }) => {
+  const router = getRouter("/");
 
-  const router = app.route('/')
   router.get('/healthz', (req, res) => {
     res.send('hi.')
   })
 
-  createScheduler(app)
+  router.get('/cron', (req, res) => {
+  })
+
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
-  app.on('schedule.repository', async (context) => {
+}
+
+async function check(context) {
+  const startTime = new Date()
+  const { head_branch: headBranch, head_sha: headSha } = context.payload.check_suite
+
+  return context.github.checks.create(context.repo({
+    name: 'Nat Validator',
+    head_branch: headBranch,
+    head_sha: headSha,
+    status: 'completed',
+    started_at: startTime,
+    conclusion: 'success',
+    completed_at: new Date(),
+    output: {
+      title: 'Validate PR',
+      summary: 'The check has passed!'
+    }
+  }))
+}
+
+async function cron(context) => {
     const { owner, repo } = context.repo()
     const closed = await closedRepo(context, owner, repo)
     if (closed) {
@@ -45,27 +64,7 @@ module.exports = async (app) => {
     }))
   })
 
-  async function check (context) {
-    const startTime = new Date()
-    const { head_branch: headBranch, head_sha: headSha } = context.payload.check_suite
-
-    return context.github.checks.create(context.repo({
-      name: 'Nat Validator',
-      head_branch: headBranch,
-      head_sha: headSha,
-      status: 'completed',
-      started_at: startTime,
-      conclusion: 'success',
-      completed_at: new Date(),
-      output: {
-        title: 'Validate PR',
-        summary: 'The check has passed!'
-      }
-    }))
-  }
-}
-
-async function loadLicense (context, owner, repo) {
+async function loadLicense(context, owner, repo) {
   try {
     const resp = await context.github.licenses.getForRepo({ owner, repo })
     context.log.debug({ resp: resp.data, repo: { owner, repo } }, 'got response from license lookup')
@@ -81,7 +80,7 @@ async function loadLicense (context, owner, repo) {
 }
 
 // TODO: Add error catching
-async function findIssue (context, title) {
+async function findIssue(context, title) {
   const opts = context.repo({ state: 'open', per_page: 100 })
   try {
     const id = 1 // TODO: set to 0
@@ -98,7 +97,7 @@ async function findIssue (context, title) {
   }
 }
 
-async function closedRepo (context, owner, repo) {
+async function closedRepo(context, owner, repo) {
   try {
     const resp = await context.github.repos.get({ owner, repo })
     const closed = resp.fork || resp.archived
