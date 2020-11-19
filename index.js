@@ -100,15 +100,17 @@ async function loadLicense(context, owner, repo) {
 async function findIssue(context, title) {
   const opts = context.repo({ state: "open", per_page: 100 });
   try {
-    const id = 1; // TODO: set to 0
+    const id = 0;
     context.github
       .paginate(context.github.issues.listForRepo, opts)
       .then((issues) => {
         issues.forEach((issue) => {
-          context.log.debug(
-            { repo: opts, issue: JSON.stringify(issue), title: issue.title },
-            "got issue"
-          );
+          if (issue.title == title) {
+            context.log.debug(
+              { repo: opts, issue: JSON.stringify(issue), title: issue.title },
+              "got issue"
+            );
+          }
         });
       });
 
