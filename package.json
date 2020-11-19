@@ -20,17 +20,21 @@
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "bunyan": "^1.8.12",
-    "bunyan-gke-stackdriver": "^0.1.2",
-    "probot": "^9.5.3",
+    "probot": "^10.0.0",
     "probot-scheduler": "^2.0.0-beta.1"
   },
   "devDependencies": {
+    "eslint": "^7.10.0",
     "jest": ">= 24.9.0",
     "nock": "^13.0.0",
+    "prettier": "^2.0.0",
     "smee-client": "^1.1.0",
     "standard": "^16.0.0"
   },
+  "prettier": {
+    "trailingComma": "es5"
+  },
+  "snyk": true,
   "engines": {
     "node": ">= 8.3.0"
   },
