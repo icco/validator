@@ -100,7 +100,7 @@ async function loadLicense(context, owner, repo) {
 async function findIssue(context, title) {
   const opts = context.repo({ state: "open", per_page: 100 });
   try {
-    const id = 0;
+    let id = 0;
     context.github
       .paginate(context.github.issues.listForRepo, opts)
       .then((issues) => {
@@ -110,6 +110,7 @@ async function findIssue(context, title) {
               { repo: opts, issue: JSON.stringify(issue), title: issue.title },
               "got issue"
             );
+            id = issue.id;
           }
         });
       });
