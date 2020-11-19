@@ -1,71 +1,72 @@
 const createScheduler = require('probot-scheduler')
-const { createStream } = require('bunyan-gke-stackdriver')
 
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = async (app) => {
-  app.log.target.addStream(createStream())
+module.exports = ({ app, getRouter }) => {
 
-  const router = app.route('/')
+  const router = getRouter("/");
   router.get('/healthz', (req, res) => {
     res.send('hi.')
   })
 
   createScheduler(app)
   app.on(['check_suite.requested', 'check_run.rerequested'], check)
-  app.on('schedule.repository', async (context) => {
-    const { owner, repo } = context.repo()
-    const closed = await closedRepo(context, owner, repo)
-    if (closed) {
-      return
-    }
+  app.on('schedule.repository', hasLicense)
 
-    const license = await loadLicense(context, owner, repo)
-    const hasLicense = (license !== '')
-    context.log.debug({ closed, license, hasLicense, repo: { owner, repo } }, 'got license')
-    if (hasLicense) {
-      return
-    }
-
-    const title = 'Repo needs a LICENSE'
-    const description = 'This repo is missing a license file according to the Github API. Please add one. Please add one @icco.'
-    const issue = await findIssue(context, title)
-
-    if (issue > 0) {
-      context.log.debug({ issue, repo: { owner, repo } }, 'app has open issue')
-      return
-    }
-
-    context.github.issues.create(context.repo({
-      title,
-      description,
-      assignees: ['icco']
-    }))
-  })
-
-  async function check (context) {
-    const startTime = new Date()
-    const { head_branch: headBranch, head_sha: headSha } = context.payload.check_suite
-
-    return context.github.checks.create(context.repo({
-      name: 'Nat Validator',
-      head_branch: headBranch,
-      head_sha: headSha,
-      status: 'completed',
-      started_at: startTime,
-      conclusion: 'success',
-      completed_at: new Date(),
-      output: {
-        title: 'Validate PR',
-        summary: 'The check has passed!'
-      }
-    }))
-  }
 }
 
-async function loadLicense (context, owner, repo) {
+async function hasLicense(context) => {
+  const { owner, repo } = context.repo()
+  const closed = await closedRepo(context, owner, repo)
+  if (closed) {
+    return
+  }
+
+  const license = await loadLicense(context, owner, repo)
+  const hasLicense = (license !== '')
+  context.log.debug({ closed, license, hasLicense, repo: { owner, repo } }, 'got license')
+  if (hasLicense) {
+    return
+  }
+
+  const title = 'Repo needs a LICENSE'
+  const description = 'This repo is missing a license file according to the Github API. Please add one. Please add one @icco.'
+  const issue = await findIssue(context, title)
+
+  if (issue > 0) {
+    context.log.debug({ issue, repo: { owner, repo } }, 'app has open issue')
+    return
+  }
+
+  context.github.issues.create(context.repo({
+    title,
+    description,
+    assignees: ['icco']
+  }))
+}
+
+async function check(context) {
+  const startTime = new Date()
+  const { head_branch: headBranch, head_sha: headSha } = context.payload.check_suite
+
+  return context.github.checks.create(context.repo({
+    name: 'Nat Validator',
+    head_branch: headBranch,
+    head_sha: headSha,
+    status: 'completed',
+    started_at: startTime,
+    conclusion: 'success',
+    completed_at: new Date(),
+    output: {
+      title: 'Validate PR',
+      summary: 'The check has passed!'
+    }
+  }))
+}
+
+async function loadLicense(context, owner, repo) {
   try {
     const resp = await context.github.licenses.getForRepo({ owner, repo })
     context.log.debug({ resp: resp.data, repo: { owner, repo } }, 'got response from license lookup')
@@ -81,7 +82,7 @@ async function loadLicense (context, owner, repo) {
 }
 
 // TODO: Add error catching
-async function findIssue (context, title) {
+async function findIssue(context, title) {
   const opts = context.repo({ state: 'open', per_page: 100 })
   try {
     const id = 1 // TODO: set to 0
@@ -98,7 +99,7 @@ async function findIssue (context, title) {
   }
 }
 
-async function closedRepo (context, owner, repo) {
+async function closedRepo(context, owner, repo) {
   try {
     const resp = await context.github.repos.get({ owner, repo })
     const closed = resp.fork || resp.archived
