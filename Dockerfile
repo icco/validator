@@ -1,7 +1,6 @@
 FROM node:14-alpine as builder
 WORKDIR /app/probot/
 
-RUN apk add --no-cache --virtual .gyp python make g++ git
 COPY ./package.json ./yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
 
