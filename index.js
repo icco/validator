@@ -1,5 +1,3 @@
-const createScheduler = require("probot-scheduler");
-
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
@@ -10,9 +8,7 @@ module.exports = (app, { getRouter }) => {
     res.send("hi.");
   });
 
-  createScheduler(app);
   app.on(["check_suite.requested", "check_run.rerequested"], check);
-  app.on("schedule.repository", hasLicense);
 };
 
 async function hasLicense(context) {
@@ -58,7 +54,8 @@ async function check(context) {
     head_sha: headSha,
   } = context.payload.check_suite;
 
-  // TODO: make a check.
+  // Should file a license request.
+  hasLicense(context);
 
   return context.github.checks.create(
     context.repo({
