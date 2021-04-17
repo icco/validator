@@ -4,7 +4,7 @@ const createScheduler = require("probot-scheduler");
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = ({ app, getRouter }) => {
+module.exports = (app, { getRouter }) => {
   const router = getRouter("/");
   router.get("/healthz", (req, res) => {
     res.send("hi.");
@@ -57,6 +57,8 @@ async function check(context) {
     head_branch: headBranch,
     head_sha: headSha,
   } = context.payload.check_suite;
+
+  // TODO: make a check.
 
   return context.github.checks.create(
     context.repo({
